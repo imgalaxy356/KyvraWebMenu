@@ -1,23 +1,21 @@
 FROM debian:bullseye
 
-# Install build tools and libraries required for compilation
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
     make \
     libpthread-stubs0-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
-# Copy source files into the container
 COPY . .
 
-# Build the project using make
+# Add compiler flags for OpenSSL (pass via environment variable)
+ENV CFLAGS="-Wall -O2 -DUSE_OPENSSL"
+ENV LDFLAGS="-lpthread -lssl -lcrypto"
+
 RUN make
 
-# Expose port 8080 for the app
 EXPOSE 8080
-
-# Run the compiled binary
 CMD ["./webmenu"]
