@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>  // for sleep()
 
 static int menu_handler(struct mg_connection *conn, void *ignored) {
     mg_printf(conn,
@@ -15,30 +16,33 @@ static int menu_handler(struct mg_connection *conn, void *ignored) {
         "<input type='submit' value='Apply'>"
         "</form>"
         "</body></html>");
-    return 200;
+    return 1;  // Return 1 to indicate handled request
 }
 
 int main(void) {
     const char *options[] = {
         "listening_ports", "8080",
         "num_threads", "4",
-        "document_root", ".",  // Optional: serve static files if needed
+        // "document_root", ".",  // Uncomment if you want static files served
         0
     };
 
     struct mg_callbacks callbacks;
     memset(&callbacks, 0, sizeof(callbacks));
 
-    struct mg_context *ctx = mg_start(&callbacks, 0, options);
+    struct mg_context *ctx = mg_start(&callbacks, NULL, options);
     if (!ctx) {
-        printf("Failed to start CivetWeb server.\n");
+        fprintf(stderr, "Failed to start CivetWeb server.\n");
         return 1;
     }
 
-    mg_set_request_handler(ctx, "/", menu_handler, 0);
+    mg_set_request_handler(ctx, "/", menu_handler, NULL);
 
     printf("Server started on port 8080.\n");
-    while (1) sleep(1);
+    while (1) {
+        sleep(1);
+    }
+
     mg_stop(ctx);
     return 0;
 }
