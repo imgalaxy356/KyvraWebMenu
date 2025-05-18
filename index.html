@@ -1,13 +1,147 @@
 <!DOCTYPE html>
-<html>
-<head><title>Web Menu</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kyvra DMA - Web Menu</title>
+  <style>
+    html, body { margin:0; padding:0; height:100%; font-family:'Segoe UI',sans-serif; background:#0d0d0d; color:#fff; overflow:hidden; }
+    .container { display:flex; flex-direction:row; height:100vh; }
+    .sidebar { width:200px; background:#0f0f0f; padding:20px 10px; box-shadow:2px 0 10px rgba(0,0,0,0.3); }
+    .sidebar button { display:block; width:100%; padding:10px; margin-bottom:10px; background:#1a1a1a; border:none; color:#ccc; cursor:pointer; text-align:left; }
+    .sidebar button.active, .sidebar button:hover { background:#ff2e2e; color:#fff; }
+    .content { flex-grow:1; padding:20px 40px; overflow-y:auto; }
+    .section { display:none; }
+    .section.active { display:block; }
+    .toggle { margin:10px 0; display:flex; align-items:center; gap:10px; }
+    input[type='range'] { width:100%; }
+    label span { min-width:40px; display:inline-block; }
+    .footer { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 14px; color: #ffffff; padding: 0 10px; }
+
+    .esp-row { display: flex; margin-bottom: 15px; align-items: center; }
+    .esp-main { width: 140px; display: flex; align-items: center; }
+    .esp-options { display: flex; gap: 15px; }
+    .esp-option { margin-right: 5px; display: flex; align-items: center; }
+    .slider-row { margin: 15px 0; }
+    .slider-label { display: block; margin-bottom: 5px; }
+    input[type='checkbox'] { margin-right: 5px; }
+    .color-option { display: flex; align-items: center; margin-bottom: 15px; }
+    .color-label { width: 140px; }
+    .color-preview { display: inline-block; width: 20px; height: 20px; border: 1px solid #fff; margin-right: 10px; }
+  </style>
+  <script>
+    function showSection(id, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function updateSmoothing(val) {
+      document.getElementById('smoothingValue').textContent = parseFloat(val).toFixed(2);
+    }
+
+    function updateEspWidth(val) {
+      document.getElementById('espWidthValue').textContent = val;
+    }
+
+    function updateSkeletonThickness(val) {
+      document.getElementById('skeletonThicknessValue').textContent = val;
+    }
+
+    function updateBulletTracersFadeTime(val) {
+      document.getElementById('bulletTracersFadeTimeValue').textContent = val;
+    }
+
+    function toggleSetting(el) {
+      // You can implement live update logic here
+    }
+  </script>
+</head>
 <body>
-<h1>Welcome to Lust DMA Web Menu</h1>
-<form method="POST" action="/apply">
-  <label><input type="checkbox" name="aimbot"> Aimbot</label><br>
-  <label>Smoothing: <input type="range" min="1" max="50" value="15" name="smoothing"></label><br>
-  <label><input type="checkbox" name="esp"> ESP</label><br>
-  <button type="submit">Apply</button>
-</form>
+  <div class="container">
+    <div class="sidebar">
+      <button class="tab active" onclick="showSection('aimbot', this)">🎯 Aimbot</button>
+      <button class="tab" onclick="showSection('esp', this)">👁️ ESP</button>
+      <button class="tab" onclick="showSection('colors', this)">🎨 Colors</button>
+      <button class="tab" onclick="showSection('radar', this)">📡 Radar</button>
+      <button class="tab" onclick="showSection('misc', this)">⚙️ Misc</button>
+    </div>
+    <div class="content">
+      <!-- AIMBOT -->
+      <div id="aimbot" class="section active">
+        <label class="toggle"><input type="checkbox" name="aimbot" onchange="toggleSetting(this)"> Enable Aimbot</label>
+        <div class="slider-row">
+          <div class="slider-label">Smoothing: <span id="smoothingValue">15.00</span></div>
+          <input type="range" id="smoothing" name="smoothing" min="1" max="100" value="15" onchange="updateSmoothing(this.value)">
+        </div>
+      </div>
+
+      <!-- ESP -->
+      <div id="esp" class="section">
+        <div class="esp-row">
+          <div class="esp-main"><input type="checkbox" name="regularBox" onchange="toggleSetting(this)"> Regular Box</div>
+          <div class="esp-options">
+            <div class="esp-option"><input type="checkbox" name="platform" onchange="toggleSetting(this)"> Platform ESP</div>
+            <div class="esp-option"><input type="checkbox" name="teamCount" onchange="toggleSetting(this)"> Team Count ESP</div>
+            <div class="esp-option"><input type="checkbox" name="rank" onchange="toggleSetting(this)"> Rank ESP</div>
+          </div>
+        </div>
+
+        <div class="esp-row">
+          <div class="esp-main"><input type="checkbox" name="cornerBox" onchange="toggleSetting(this)"> Corner Box</div>
+          <div class="esp-options">
+            <div class="esp-option"><input type="checkbox" name="fovArrows" onchange="toggleSetting(this)"> Fov Arrows</div>
+            <div class="esp-option"><input type="checkbox" name="fovArrowFilled" onchange="toggleSetting(this)"> Arrow Filled</div>
+            <div class="esp-option"><input type="checkbox" name="fov" onchange="toggleSetting(this)"> Fov Circle</div>
+            <div class="esp-option"><input type="checkbox" name="dynamicFov" onchange="toggleSetting(this)"> Dynamic Fov</div>
+          </div>
+        </div>
+
+        <div class="esp-row">
+          <div class="esp-main"><input type="checkbox" name="filledBox" onchange="toggleSetting(this)"> Filled Box</div>
+        </div>
+
+        <div class="esp-row">
+          <div class="esp-main"><input type="checkbox" name="skeleton" onchange="toggleSetting(this)"> Skeleton</div>
+        </div>
+
+        <div class="esp-row">
+          <div class="esp-main"><input type="checkbox" name="headDot" onchange="toggleSetting(this)"> Head Dot</div>
+        </div>
+
+        <div class="esp-row">
+          <div class="esp-main"><input type="checkbox" name="playerNames" onchange="toggleSetting(this)"> Name ESP</div>
+        </div>
+
+        <div class="esp-row">
+          <div class="esp-main"><input type="checkbox" name="distance" onchange="toggleSetting(this)"> Distance ESP</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">ESP Width: <span id="espWidthValue">50</span></div>
+          <input type="range" id="espWidth" name="espWidth" min="25" max="100" value="50" onchange="updateEspWidth(this.value)">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">Skeleton Thickness: <span id="skeletonThicknessValue">2</span></div>
+          <input type="range" id="skeletonThickness" name="skeletonThickness" min="0" max="6" value="2" onchange="updateSkeletonThickness(this.value)">
+        </div>
+
+        <div class="esp-row">
+          <div class="esp-main"><input type="checkbox" name="bulletTracers" onchange="toggleSetting(this)"> Bullet Tracers</div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">Bullet Tracers Fade Time (s): <span id="bulletTracersFadeTimeValue">3</span></div>
+          <input type="range" id="bulletTracersFadeTime" name="bulletTracersFadeTime" min="1" max="10" value="3" onchange="updateBulletTracersFadeTime(this.value)">
+        </div>
+      </div>
+
+      <!-- COLORS, RADAR, MISC placeholders -->
+      <div id="colors" class="section"><h3>Color settings coming soon...</h3></div>
+      <div id="radar" class="section"><h3>Radar settings coming soon...</h3></div>
+      <div id="misc" class="section"><h3>Misc settings coming soon...</h3></div>
+    </div>
+  </div>
 </body>
 </html>
