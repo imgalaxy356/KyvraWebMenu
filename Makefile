@@ -1,11 +1,9 @@
 CC = gcc
-CFLAGS = -Wall -O2
-LDFLAGS = -lpthread
-
-.PHONY: all clean
+CFLAGS ?= -Wall -O2
+LDFLAGS ?= -lpthread
 
 all:
-	$(CC) $(CFLAGS) main.c civetweb.c -o webmenu $(LDFLAGS)
+	$(CC) main.c civetweb.c -o webmenu $(CFLAGS) $(LDFLAGS)
 
 clean:
 	rm -f webmenu
