@@ -5,11 +5,6 @@
 #include <stdbool.h>
 #include "civetweb.h"  // adjust include path if needed
 
-// Global GameSetting struct
-struct {
-    bool aimbot;
-} GameSetting = { false };
-
 // URL decode function (unchanged)
 static void url_decode(char* dst, const char* src) {
     char a, b;
