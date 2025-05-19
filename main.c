@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "civetweb.h"  // adjust include path if needed
+#include <unistd.h>
 
 // URL decode function (unchanged)
 static void url_decode(char* dst, const char* src) {
