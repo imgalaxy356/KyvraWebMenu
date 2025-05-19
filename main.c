@@ -11,7 +11,18 @@
 struct {
     bool aimbot;
 } GameSetting = { false };
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+#include <stdbool.h>
+
+bool get_aimbot(void);
+void set_aimbot(bool val);
+
+#ifdef __cplusplus
+}
+#endif
 // URL decode function (unchanged)
 static void url_decode(char* dst, const char* src) {
     char a, b;
@@ -72,11 +83,11 @@ int toggle_handler(struct mg_connection* conn, void* cbdata) {
     char* val = get_param_value(post_data, "aimbot");
     if (val) {
         if (strcmp(val, "on") == 0) {
-            GameSetting.aimbot = true;
+            set_aimbot(true);
             printf("Aimbot Enabled\n");
         }
         else if (strcmp(val, "off") == 0) {
-            GameSetting.aimbot = false;
+            set_aimbot(false);
             printf("Aimbot Disabled\n");
         }
     }
