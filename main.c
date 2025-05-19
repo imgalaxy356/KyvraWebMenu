@@ -4,7 +4,13 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "civetweb.h"  // adjust include path if needed
-#include <unistd.h>
+#include <unistd.h> // for usleep
+
+#include <stdbool.h> // for bool
+
+struct {
+    bool aimbot;
+} GameSetting = { false };
 
 // URL decode function (unchanged)
 static void url_decode(char* dst, const char* src) {
