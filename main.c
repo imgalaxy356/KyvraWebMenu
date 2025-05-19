@@ -5,13 +5,12 @@
 #include <stdbool.h>
 #include "civetweb.h"  // adjust include path if needed
 
-// Declare your GameSetting somewhere globally
+// Global GameSetting struct
 struct {
     bool aimbot;
 } GameSetting = { false };
 
-// URL decode, get_param_value functions same as you provided (add here)...
-
+// URL decode function (unchanged)
 static void url_decode(char* dst, const char* src) {
     char a, b;
     while (*src) {
@@ -38,6 +37,7 @@ static void url_decode(char* dst, const char* src) {
     *dst = '\0';
 }
 
+// Extract param from POST body (unchanged)
 static char* get_param_value(const char* data, const char* key) {
     static char decoded_value[128];
     const char* pos = strstr(data, key);
@@ -61,9 +61,10 @@ static char* get_param_value(const char* data, const char* key) {
     return decoded_value;
 }
 
+// POST handler for /toggle (unchanged)
 int toggle_handler(struct mg_connection* conn, void* cbdata) {
     char post_data[1024];
-    int post_data_len = mg_read(conn, post_data, sizeof(post_data));
+    int post_data_len = mg_read(conn, post_data, sizeof(post_data) - 1);
     post_data[post_data_len] = '\0';
 
     char* val = get_param_value(post_data, "aimbot");
@@ -85,18 +86,32 @@ int toggle_handler(struct mg_connection* conn, void* cbdata) {
     return 1;
 }
 
-int redirect_handler(struct mg_connection* conn, void* cbdata) {
-    mg_printf(conn,
-        "HTTP/1.1 302 Found\r\n"
-        "Location: https://kyvrawebmenu.onrender.com\r\n"
-        "Content-Length: 0\r\n\r\n");
-    return 302;
-}
+// New root handler to serve a simple status page with toggle form
+int root_handler(struct mg_connection* conn, void* cbdata) {
+    const char* page_template =
+        "<html><head><title>Game Menu</title></head><body>"
+        "<h1>Aimbot Status: %s</h1>"
+        "<form method='POST' action='/toggle'>"
+        "<button type='submit' name='aimbot' value='%s'>Turn %s</button>"
+        "</form>"
+        "</body></html>";
 
-static int log_all_requests(struct mg_connection* conn, void* cbdata) {
-    const struct mg_request_info* ri = mg_get_request_info(conn);
-    printf("Received request: %s %s\n", ri->request_method, ri->request_uri);
-    return 0;
+    const char* status = GameSetting.aimbot ? "Enabled" : "Disabled";
+    const char* next_action_value = GameSetting.aimbot ? "off" : "on";
+    const char* next_action_label = GameSetting.aimbot ? "Off" : "On";
+
+    char page[512];
+    snprintf(page, sizeof(page), page_template, status, next_action_value, next_action_label);
+
+    mg_printf(conn,
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: %d\r\n"
+        "\r\n"
+        "%s",
+        (int)strlen(page), page);
+
+    return 1;
 }
 
 int main() {
@@ -122,12 +137,14 @@ int main() {
         return 1;
     }
 
-    mg_set_request_handler(ctx, "/", redirect_handler, NULL);
-    mg_set_request_handler(ctx, "/web", redirect_handler, NULL);
+    // Use the root_handler for "/" instead of redirect_handler
+    mg_set_request_handler(ctx, "/", root_handler, NULL);
+    // You can remove or repurpose "/web" or others as needed
+    // mg_set_request_handler(ctx, "/web", root_handler, NULL);
     mg_set_request_handler(ctx, "/toggle", toggle_handler, NULL);
 
     printf("Server started, listening on port %s\n", listen_port);
-    printf("Redirecting / and /web to https://kyvrawebmenu.onrender.com\n");
+    printf("Serving / with game menu page\n");
 
     while (true) {
 #ifdef _WIN32
