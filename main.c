@@ -112,6 +112,7 @@ int root_handler(struct mg_connection* conn, void* cbdata) {
     const char* status = GameSetting.aimbot ? "Enabled" : "Disabled";
     const char* next_action_value = GameSetting.aimbot ? "off" : "on";
     const char* next_action_label = GameSetting.aimbot ? "Off" : "On";
+const char* status = get_aimbot() ? "Enabled" : "Disabled";
 
     char page[512];
     snprintf(page, sizeof(page), page_template, status, next_action_value, next_action_label);
