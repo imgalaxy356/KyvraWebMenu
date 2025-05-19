@@ -51,10 +51,88 @@
     function updateBulletTracersFadeTime(val) {
       document.getElementById('bulletTracersFadeTimeValue').textContent = val;
     }
+    
+  function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
 
-    function toggleSetting(el) {
-      // You can implement live update logic here
-    }
+function toggleSetting(cb) {
+  const name = cb.name;
+  const value = cb.checked ? 'on' : 'off';
+  fetch('/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: name + '=' + value
+  });
+}
+
+function updateSmoothing(value) {
+  document.getElementById('smoothingValue').textContent = value;
+  fetch('/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'smoothing=' + value
+  });
+}
+
+function updateEspWidth(value) {
+  document.getElementById('espWidthValue').textContent = value;
+  fetch('/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'espWidth=' + value
+  });
+}
+
+function updateSkeletonThickness(value) {
+  document.getElementById('skeletonThicknessValue').textContent = value;
+  fetch('/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'skeletonThickness=' + value
+  });
+}
+
+function updateBulletTracersFadeTime(value) {
+  document.getElementById('bulletTracersFadeTimeValue').textContent = value;
+  fetch('/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'bulletTracersFadeTime=' + value
+  });
+}
+
+function updatePredictionDotSize(value) {
+  document.getElementById('predictionDotSizeValue').textContent = value;
+  fetch('/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'predictionDotSize=' + value
+  });
+}
+
+function updateFontSize(value) {
+  document.getElementById('fontSizeValue').textContent = value;
+  fetch('/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'fontSize=' + value
+  });
+}
+
+function updateColor(colorPicker) {
+  const name = colorPicker.name;
+  const value = colorPicker.value;
+  colorPicker.previousElementSibling.style.backgroundColor = value;
+  fetch('/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: name + '=' + value.substring(1)  // Remove '#' from hex
+  });
+}
   </script>
 </head>
 <body>
